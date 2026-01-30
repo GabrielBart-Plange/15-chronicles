@@ -16,11 +16,6 @@ export function useRequireAuth() {
                 return;
             }
 
-            if (!user.emailVerified) {
-                router.replace("/verify-email");
-                return;
-            }
-
             setReady(true);
         });
 
