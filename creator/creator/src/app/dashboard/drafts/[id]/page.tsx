@@ -332,7 +332,7 @@ export default function DraftEditorPage() {
                     <div className="absolute -top-12 left-0 right-0 flex gap-2 animate-in slide-in-from-bottom-2 duration-300">
                         <button
                             onClick={() => {
-                                const template = `\n[System: Notification text here]\n`;
+                                const template = `\n[System: Alert | Connection timed out.]\n`;
                                 if (type === 'short') setContent(content + template);
                                 else updateActiveChapter({ content: (chapters[activeChapterIndex]?.content || "") + template });
                             }}
@@ -342,7 +342,7 @@ export default function DraftEditorPage() {
                         </button>
                         <button
                             onClick={() => {
-                                const template = `\n{Quest: Quest Name\n- Objective: ...\n- Reward: ...}\n`;
+                                const template = `\n{Quest: Daily Quests | - 5km run\n- 50 push-ups}\n`;
                                 if (type === 'short') setContent(content + template);
                                 else updateActiveChapter({ content: (chapters[activeChapterIndex]?.content || "") + template });
                             }}
