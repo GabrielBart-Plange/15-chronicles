@@ -66,65 +66,65 @@ export default function ProfilePage() {
 
     if (!user) return (
         <div className="animate-pulse space-y-4">
-            <div className="h-8 w-48 bg-zinc-900 rounded" />
-            <div className="h-4 w-64 bg-zinc-900 rounded" />
+            <div className="h-8 w-48 bg-[var(--reader-border)]/10 rounded" />
+            <div className="h-4 w-64 bg-[var(--reader-border)]/10 rounded" />
         </div>
     );
 
     return (
         <section className="space-y-12 pb-20">
             <header className="space-y-4">
-                <h1 className="text-2xl tracking-[0.2em] font-light uppercase text-white">
+                <h1 className="text-2xl tracking-[0.2em] font-light uppercase text-[var(--foreground)]">
                     Creator Profile
                 </h1>
-                <p className="text-gray-500 max-w-lg leading-relaxed text-sm">
+                <p className="text-[var(--reader-text)]/70 max-w-lg leading-relaxed text-sm">
                     This is your public identity within the Chronicles. Your banner and avatar will be shown on your author profile in the reader.
                 </p>
             </header>
 
             <div className="max-w-4xl space-y-8">
-                <div className="border border-white/5 bg-zinc-900/20 p-8 rounded-sm space-y-12">
+                <div className="border border-[var(--reader-border)] bg-[var(--reader-border)]/10 p-8 rounded-sm space-y-12">
 
                     {/* Public Info */}
                     <div className="grid md:grid-cols-2 gap-12">
                         <div className="space-y-8">
                             <div className="space-y-3">
-                                <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold italic">
+                                <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold italic">
                                     Public Username
                                 </label>
                                 <input
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     placeholder="e.g. Chronicler_42"
-                                    className="w-full bg-black border border-white/10 p-3 text-gray-200 focus:outline-none focus:border-white/30 transition-colors text-sm"
+                                    className="w-full bg-[var(--background)] border border-[var(--reader-border)] p-3 text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors text-sm"
                                 />
-                                <p className="text-[10px] text-gray-600 tracking-wider">This name appears on all your published work.</p>
+                                <p className="text-[10px] text-[var(--reader-text)]/70 tracking-wider">This name appears on all your published work.</p>
                             </div>
 
                             <div className="space-y-3">
-                                <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold italic">
+                                <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold italic">
                                     Biography
                                 </label>
                                 <textarea
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
                                     placeholder="Tell your readers about yourself..."
-                                    className="w-full bg-black border border-white/10 p-3 text-gray-200 focus:outline-none focus:border-white/30 transition-colors h-40 resize-none text-sm leading-relaxed"
+                                    className="w-full bg-[var(--background)] border border-[var(--reader-border)] p-3 text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors h-40 resize-none text-sm leading-relaxed"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-8">
                             <div className="space-y-3">
-                                <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold italic">
+                                <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold italic">
                                     Profile Avatar
                                 </label>
                                 <div className="flex items-start gap-4">
-                                    <div className="h-24 w-24 flex-shrink-0 bg-zinc-900 border border-white/5 rounded-full overflow-hidden">
+                                    <div className="h-24 w-24 flex-shrink-0 bg-[var(--reader-bg)] border border-[var(--reader-border)] rounded-full overflow-hidden">
                                         {avatarUrl ? (
                                             <img src={avatarUrl} className="w-full h-full object-cover" alt="Avatar Preview" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-gray-700 font-bold">?</div>
+                                            <div className="w-full h-full flex items-center justify-center text-[var(--reader-text)] font-bold">?</div>
                                         )}
                                     </div>
                                     <div className="flex-1">
@@ -134,12 +134,12 @@ export default function ProfilePage() {
                             </div>
 
                             <div className="space-y-3">
-                                <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold italic">
+                                <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold italic">
                                     Profile Banner
                                 </label>
                                 <div className="space-y-4">
-                                    <div className="h-24 w-full bg-zinc-900 border border-white/5 rounded-sm overflow-hidden bg-cover bg-center" style={{ backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'none' }}>
-                                        {!bannerUrl && <div className="w-full h-full flex items-center justify-center text-gray-700 text-[10px] uppercase tracking-widest italic">No Banner uploaded</div>}
+                                    <div className="h-24 w-full bg-[var(--reader-bg)] border border-[var(--reader-border)] rounded-sm overflow-hidden bg-cover bg-center" style={{ backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'none' }}>
+                                        {!bannerUrl && <div className="w-full h-full flex items-center justify-center text-[var(--reader-text)] text-[10px] uppercase tracking-widest italic">No Banner uploaded</div>}
                                     </div>
                                     <ImageUpload onUploadComplete={setBannerUrl} className="max-w-full" />
                                 </div>
@@ -147,29 +147,29 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    <div className="pt-8 border-t border-white/5 flex items-center justify-between">
+                    <div className="pt-8 border-t border-[var(--reader-border)] flex items-center justify-between">
                         <div className="space-y-1">
-                            <p className="text-[10px] uppercase tracking-widest text-gray-600">Connected as</p>
-                            <p className="text-sm font-medium text-white">{user.email}</p>
+                            <p className="text-[10px] uppercase tracking-widest text-[var(--reader-text)]">Connected as</p>
+                            <p className="text-sm font-medium text-[var(--foreground)]">{user.email}</p>
                         </div>
                         <button
                             onClick={handleSaveProfile}
                             disabled={saving}
-                            className="px-12 py-3 bg-white text-black text-xs uppercase tracking-[0.2em] font-bold hover:bg-gray-200 disabled:bg-gray-500 transition-all shadow-xl"
+                            className="px-12 py-3 bg-[var(--foreground)] text-[var(--background)] text-xs uppercase tracking-[0.2em] font-bold hover:opacity-90 disabled:opacity-50 transition-all shadow-xl"
                         >
                             {saving ? "Synchronizing..." : "Update Profile"}
                         </button>
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold border-t border-white/5 pt-6 block">
+                        <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold border-t border-[var(--reader-border)] pt-6 block">
                             Email Address
                         </label>
-                        <p className="text-lg text-gray-200">{user.email}</p>
+                        <p className="text-lg text-[var(--reader-text)]">{user.email}</p>
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold">
+                        <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold">
                             Verification Status
                         </label>
                         <p className={`text-sm tracking-wide ${user.emailVerified ? 'text-emerald-500' : 'text-amber-500'}`}>
@@ -178,16 +178,16 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-[10px] uppercase tracking-[0.3em] text-gray-600 font-bold">
+                        <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold">
                             Account Created
                         </label>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-[var(--reader-text)]/70">
                             {user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'Unknown'}
                         </p>
                     </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/5">
+                <div className="pt-6 border-t border-[var(--reader-border)]">
                     <button
                         onClick={handleLogout}
                         className="px-6 py-2 border border-red-900/30 text-red-500/80 text-xs uppercase tracking-widest hover:bg-red-900/10 transition-all rounded-sm"
@@ -197,7 +197,7 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            <footer className="pt-12 text-[10px] uppercase tracking-[0.4em] text-gray-800">
+            <footer className="pt-12 text-[10px] uppercase tracking-[0.4em] text-[var(--reader-text)]">
                 Chronicles Identity Management v1.0
             </footer>
         </section>

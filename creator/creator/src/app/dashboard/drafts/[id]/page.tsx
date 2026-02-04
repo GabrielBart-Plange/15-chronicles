@@ -237,17 +237,17 @@ export default function DraftEditorPage() {
         <section className="max-w-4xl space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-1">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Category</label>
-                    <div className="flex gap-2 p-1 bg-white/5 border border-white/5">
+                    <label className="block text-[10px] uppercase tracking-widest text-[var(--reader-text)] mb-2 font-bold">Category</label>
+                    <div className="flex gap-2 p-1 bg-[var(--reader-border)]/10 border border-[var(--reader-border)]">
                         <button
                             onClick={() => { setCategory("fiction"); setGenre(GENRE_OPTIONS.fiction[0]); setIsCustomGenre(false); }}
-                            className={`flex-1 py-2 text-[10px] uppercase tracking-widest transition-all ${category === "fiction" ? "bg-white text-black font-bold" : "text-gray-500 hover:text-white"}`}
+                            className={`flex-1 py-2 text-[10px] uppercase tracking-widest transition-all ${category === "fiction" ? "bg-[var(--foreground)] text-[var(--background)] font-bold" : "text-[var(--reader-text)] hover:text-[var(--foreground)]"}`}
                         >
                             Fiction
                         </button>
                         <button
                             onClick={() => { setCategory("non-fiction"); setGenre(GENRE_OPTIONS["non-fiction"][0]); setIsCustomGenre(false); }}
-                            className={`flex-1 py-2 text-[10px] uppercase tracking-widest transition-all ${category === "non-fiction" ? "bg-white text-black font-bold" : "text-gray-500 hover:text-white"}`}
+                            className={`flex-1 py-2 text-[10px] uppercase tracking-widest transition-all ${category === "non-fiction" ? "bg-[var(--foreground)] text-[var(--background)] font-bold" : "text-[var(--reader-text)] hover:text-[var(--foreground)]"}`}
                         >
                             Non-Fiction
                         </button>
@@ -255,7 +255,7 @@ export default function DraftEditorPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Genre</label>
+                    <label className="block text-[10px] uppercase tracking-widest text-[var(--reader-text)] mb-2 font-bold">Genre</label>
                     <div className="flex gap-2">
                         {!isCustomGenre ? (
                             <select
@@ -264,7 +264,7 @@ export default function DraftEditorPage() {
                                     if (e.target.value === "CUSTOM") setIsCustomGenre(true);
                                     else setGenre(e.target.value);
                                 }}
-                                className="flex-1 bg-black border border-white/10 p-2 text-sm focus:outline-none focus:border-white/30 transition-colors uppercase tracking-widest"
+                                className="flex-1 bg-[var(--background)] border border-[var(--reader-border)] p-2 text-sm text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors uppercase tracking-widest"
                             >
                                 {GENRE_OPTIONS[category].map(opt => (
                                     <option key={opt} value={opt}>{opt}</option>
@@ -277,11 +277,11 @@ export default function DraftEditorPage() {
                                     value={genre === "CUSTOM" ? "" : genre}
                                     onChange={(e) => setGenre(e.target.value)}
                                     placeholder="Enter custom genre..."
-                                    className="flex-1 bg-black border border-white/10 p-2 text-sm focus:outline-none focus:border-white/30 transition-colors"
+                                    className="flex-1 bg-[var(--background)] border border-[var(--reader-border)] p-2 text-sm text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors"
                                 />
                                 <button
                                     onClick={() => { setIsCustomGenre(false); setGenre(GENRE_OPTIONS[category][0]); }}
-                                    className="px-3 border border-white/10 text-gray-500 hover:text-white text-xs"
+                                    className="px-3 border border-[var(--reader-border)] text-[var(--reader-text)] hover:text-[var(--foreground)] text-xs"
                                 >
                                     ✕
                                 </button>
@@ -292,25 +292,25 @@ export default function DraftEditorPage() {
             </div>
 
             <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-widest text-gray-500 font-bold">Book Title</label>
+                <label className="block text-[10px] uppercase tracking-widest text-[var(--reader-text)] font-bold">Book Title</label>
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter the chronicle's title..."
-                    className="w-full bg-black border border-white/10 p-3 text-xl font-light focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-[var(--background)] border border-[var(--reader-border)] p-3 text-xl font-light text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors"
                 />
             </div>
 
-            <div className="space-y-4 bg-white/5 border border-white/5 p-4 relative group">
+            <div className="space-y-4 bg-[var(--reader-border)]/10 border border-[var(--reader-border)] p-4 relative group">
                 <div className="flex justify-between items-center">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 font-bold">Smart Tags (@tags)</label>
-                    <span className="text-[9px] text-gray-600 italic">Prepend @system to unlock system tools</span>
+                    <label className="block text-[10px] uppercase tracking-widest text-[var(--reader-text)] font-bold">Smart Tags (@tags)</label>
+                    <span className="text-[9px] text-[var(--reader-text)]/70 italic">Prepend @system to unlock system tools</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {tags.map((tag, idx) => (
-                        <span key={idx} className={`px-2 py-1 text-[10px] uppercase tracking-widest border ${tag.toLowerCase() === '@system' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-300' : 'border-white/10 bg-white/5 text-gray-400'} flex items-center gap-2`}>
+                        <span key={idx} className={`px-2 py-1 text-[10px] uppercase tracking-widest border ${tag.toLowerCase() === '@system' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' : 'border-[var(--reader-border)] bg-[var(--background)] text-[var(--reader-text)]'} flex items-center gap-2`}>
                             {tag}
-                            <button onClick={() => setTags(tags.filter((_, i) => i !== idx))} className="hover:text-white">✕</button>
+                            <button onClick={() => setTags(tags.filter((_, i) => i !== idx))} className="hover:text-[var(--foreground)]">✕</button>
                         </span>
                     ))}
                     <input
@@ -323,7 +323,7 @@ export default function DraftEditorPage() {
                             }
                         }}
                         placeholder="Add tag (e.g. action)..."
-                        className="bg-transparent border-none text-[10px] uppercase tracking-widest focus:outline-none text-gray-300 w-32"
+                        className="bg-transparent border-none text-[10px] uppercase tracking-widest focus:outline-none text-[var(--foreground)] placeholder-[var(--reader-text)]/50 w-32"
                     />
                 </div>
 
@@ -371,39 +371,39 @@ export default function DraftEditorPage() {
                     className="flex-shrink-0"
                 />
                 <div className="flex-1 space-y-4">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Current URL</p>
+                    <p className="text-[10px] uppercase tracking-widest text-[var(--reader-text)] font-bold mb-1">Current URL</p>
                     <input
                         value={coverImage}
                         onChange={(e) => setCoverImage(e.target.value)}
                         placeholder="https://example.com/cover.jpg"
-                        className="w-full bg-black border border-white/10 p-2 text-sm focus:outline-none focus:border-white/30 transition-colors"
+                        className="w-full bg-[var(--background)] border border-[var(--reader-border)] p-2 text-sm text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors"
                     />
-                    <p className="text-[10px] text-gray-600 italic">"Upload a file above or paste a direct link here."</p>
+                    <p className="text-[10px] text-[var(--reader-text)]/70 italic">"Upload a file above or paste a direct link here."</p>
                 </div>
             </div>
 
             {type === "short" ? (
                 <div className="pt-4">
-                    <label className="block text-xs uppercase tracking-widest text-gray-500 mb-1">Content</label>
+                    <label className="block text-xs uppercase tracking-widest text-[var(--reader-text)] mb-1">Content</label>
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Start writing…"
-                        className="w-full h-[60vh] bg-black border border-white/10 p-3 resize-none focus:outline-none focus:border-white/30 transition-colors"
+                        className="w-full h-[60vh] bg-[var(--background)] border border-[var(--reader-border)] p-3 resize-none text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors"
                     />
                 </div>
             ) : (
                 <div className="flex gap-6 pt-4 h-[70vh]">
                     {/* Chapter Sidebar */}
-                    <div className="w-48 flex flex-col gap-2 border-r border-white/5 pr-4 overflow-y-auto">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-600 font-bold mb-2">Chapters</label>
+                    <div className="w-48 flex flex-col gap-2 border-r border-[var(--reader-border)] pr-4 overflow-y-auto">
+                        <label className="text-[10px] uppercase tracking-widest text-[var(--reader-text)] font-bold mb-2">Chapters</label>
                         {chapters.map((ch, idx) => (
                             <div key={ch?.id || `idx-${idx}`} className="group relative">
                                 <button
                                     onClick={() => setActiveChapterIndex(idx)}
                                     className={`w-full text-left p-2 text-xs truncate transition-colors pr-8 ${activeChapterIndex === idx
-                                        ? "bg-white/10 text-white"
-                                        : "text-gray-500 hover:text-gray-300"
+                                        ? "bg-[var(--reader-border)]/20 text-[var(--foreground)]"
+                                        : "text-[var(--reader-text)] hover:text-[var(--foreground)]"
                                         }`}
                                 >
                                     {idx + 1}. {ch?.title || "Untitled"}
@@ -419,7 +419,7 @@ export default function DraftEditorPage() {
                         ))}
                         <button
                             onClick={addChapter}
-                            className="text-center p-2 text-[10px] uppercase tracking-widest border border-dashed border-white/10 text-gray-500 hover:text-white hover:border-white/30 transition-all mt-4"
+                            className="text-center p-2 text-[10px] uppercase tracking-widest border border-dashed border-[var(--reader-border)] text-[var(--reader-text)] hover:text-[var(--foreground)] hover:border-[var(--reader-text)] transition-all mt-4"
                         >
                             + New Chapter
                         </button>
@@ -428,32 +428,32 @@ export default function DraftEditorPage() {
                     {/* Chapter Editor */}
                     <div className="flex-1 flex flex-col gap-4">
                         <div>
-                            <label className="block text-[10px] uppercase tracking-widest text-gray-600 font-bold mb-1">Chapter Title</label>
+                            <label className="block text-[10px] uppercase tracking-widest text-[var(--reader-text)] font-bold mb-1">Chapter Title</label>
                             <input
                                 value={chapters[activeChapterIndex]?.title || ""}
                                 onChange={(e) => updateActiveChapter({ title: e.target.value })}
                                 placeholder="E.g. The Quiet Before"
-                                className="w-full bg-black border border-white/10 p-2 text-sm focus:outline-none focus:border-white/30 transition-colors"
+                                className="w-full bg-[var(--background)] border border-[var(--reader-border)] p-2 text-sm text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors"
                             />
                         </div>
                         <div className="flex-1 flex flex-col min-h-0">
-                            <label className="block text-[10px] uppercase tracking-widest text-gray-600 font-bold mb-1">Chapter Content</label>
+                            <label className="block text-[10px] uppercase tracking-widest text-[var(--reader-text)] font-bold mb-1">Chapter Content</label>
                             <textarea
                                 value={chapters[activeChapterIndex]?.content || ""}
                                 onChange={(e) => updateActiveChapter({ content: e.target.value })}
                                 placeholder="Expand the chronicle…"
-                                className="flex-1 bg-black border border-white/10 p-3 resize-none focus:outline-none focus:border-white/30 transition-colors"
+                                className="flex-1 bg-[var(--background)] border border-[var(--reader-border)] p-3 resize-none text-[var(--foreground)] focus:outline-none focus:border-[var(--reader-text)] transition-colors"
                             />
                         </div>
                     </div>
                 </div>
             )}
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[var(--reader-text)]">
                 {saving ? "Saving…" : "Saved"}
             </p>
 
-            <button onClick={publish} className="bg-white text-black px-6 py-2 text-sm font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors">
+            <button onClick={publish} className="bg-[var(--foreground)] text-[var(--background)] px-6 py-2 text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-opacity">
                 Publish {type === "novel" ? "novel" : "short story"}
             </button>
         </section>

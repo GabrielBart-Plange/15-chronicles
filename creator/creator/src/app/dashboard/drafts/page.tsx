@@ -62,30 +62,30 @@ export default function DraftsPage() {
     return (
         <section className="space-y-6">
             <header className="flex items-center justify-between">
-                <h1 className="tracking-widest capitalize">Drafts</h1>
+                <h1 className="tracking-widest capitalize text-[var(--foreground)]">Drafts</h1>
 
                 <Link
                     href="/dashboard/drafts/new"
-                    className="border border-white/10 px-4 py-2 text-sm hover:bg-white hover:text-black transition-colors"
+                    className="border border-[var(--reader-border)] px-4 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors"
                 >
                     New draft
                 </Link>
             </header>
 
             {drafts.length === 0 ? (
-                <p className="text-gray-500">No drafts yet.</p>
+                <p className="text-[var(--reader-text)]">No drafts yet.</p>
             ) : (
                 <ul className="space-y-3">
                     {drafts.map((d) => (
                         <li key={d.id} className="group relative">
                             <Link
                                 href={`/dashboard/drafts/${d.id}`}
-                                className="block border border-gray-800 p-4 hover:border-gray-600 hover:bg-zinc-900/50 transition-all"
+                                className="block border border-[var(--reader-border)] p-4 hover:border-[var(--reader-text)] hover:bg-[var(--reader-border)]/10 transition-all"
                             >
                                 <div className="flex justify-between items-start pr-12">
                                     <div>
-                                        <p className="text-gray-100 group-hover:text-white">{d.title || "Untitled"}</p>
-                                        <p className="text-xs text-gray-500 uppercase tracking-widest mt-1">
+                                        <p className="text-[var(--reader-text)] group-hover:text-[var(--foreground)]">{d.title || "Untitled"}</p>
+                                        <p className="text-xs text-[var(--reader-text)]/70 uppercase tracking-widest mt-1">
                                             {d.type === "short" ? "Short story" : "Novel"}
                                         </p>
                                     </div>
@@ -94,7 +94,7 @@ export default function DraftsPage() {
 
                             <button
                                 onClick={() => deleteDraft(d.id)}
-                                className="absolute top-4 right-4 text-xs text-gray-600 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 px-2 py-1"
+                                className="absolute top-4 right-4 text-xs text-[var(--reader-text)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 px-2 py-1"
                             >
                                 Delete
                             </button>

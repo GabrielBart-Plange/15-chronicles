@@ -27,21 +27,23 @@ export default function NewDraftPage() {
     };
 
     return (
-        <section className="space-y-4">
-            <h1 className="tracking-widest">New Draft</h1>
+        <section className="space-y-6 max-w-xl mx-auto pt-12">
+            <h1 className="tracking-widest text-xl uppercase text-[var(--foreground)] mb-8">Start a New Draft</h1>
 
             <button
                 onClick={() => create("short")}
-                className="border px-4 py-2 block"
+                className="w-full border border-[var(--reader-border)] p-8 text-left group hover:bg-[var(--reader-border)]/10 transition-all"
             >
-                Short Story
+                <span className="text-lg font-medium text-[var(--foreground)] group-hover:pl-2 transition-all block mb-2">Short Story</span>
+                <span className="text-sm text-[var(--reader-text)] block">A single piece of work, published as one entity.</span>
             </button>
 
             <button
                 onClick={() => create("novel")}
-                className="border px-4 py-2 block"
+                className="w-full border border-[var(--reader-border)] p-8 text-left group hover:bg-[var(--reader-border)]/10 transition-all"
             >
-                Novel 
+                <span className="text-lg font-medium text-[var(--foreground)] group-hover:pl-2 transition-all block mb-2">Novel Schema</span>
+                <span className="text-sm text-[var(--reader-text)] block">A multi-chapter work with structured organization.</span>
             </button>
         </section>
     );

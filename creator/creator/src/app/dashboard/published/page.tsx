@@ -49,32 +49,31 @@ export default function PublishedPage() {
         setStories(stories.filter(s => s.id !== id));
     };
 
-    if (loading) return <div className="p-6 text-gray-400">Loading published works...</div>;
-
+    if (loading) return <div className="p-6 text-[var(--reader-text)]">Loading published works...</div>;
     return (
-        <main className="p-6 text-gray-200 space-y-6">
+        <main className="p-6 text-[var(--reader-text)] space-y-6">
             <header className="flex justify-between items-center">
-                <h1 className="text-xl tracking-widest uppercase">
+                <h1 className="text-xl tracking-widest uppercase text-[var(--foreground)]">
                     Published Works
                 </h1>
             </header>
 
             {stories.length === 0 ? (
-                <p className="text-gray-500">
-                    You haven't published any stories yet. Go to your <Link href="/dashboard/drafts" className="text-white hover:underline">Drafts</Link> to publish one.
+                <p className="text-[var(--reader-text)]">
+                    You haven't published any stories yet. Go to your <Link href="/dashboard/drafts" className="text-[var(--foreground)] hover:underline">Drafts</Link> to publish one.
                 </p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {stories.map((story) => (
-                        <div key={story.id} className="bg-zinc-900 border border-zinc-800 p-4 rounded-md flex flex-col gap-3 group">
+                        <div key={story.id} className="bg-[var(--reader-border)]/10 border border-[var(--reader-border)] p-4 rounded-md flex flex-col gap-3 group">
                             <div className="flex justify-between items-start">
-                                <h3 className="font-medium text-lg text-white group-hover:text-blue-400 transition-colors">
+                                <h3 className="font-medium text-lg text-[var(--foreground)] group-hover:text-blue-400 transition-colors">
                                     {story.title || "Untitled"}
                                 </h3>
                                 <div className="flex gap-3">
                                     <Link
                                         href={`/dashboard/drafts/${story.id}`}
-                                        className="text-xs text-gray-500 hover:text-white"
+                                        className="text-xs text-[var(--reader-text)] hover:text-[var(--foreground)]"
                                     >
                                         Edit
                                     </Link>
@@ -87,11 +86,11 @@ export default function PublishedPage() {
                                 </div>
                             </div>
 
-                            <p className="text-sm text-gray-500 line-clamp-3">
+                            <p className="text-sm text-[var(--reader-text)]/80 line-clamp-3">
                                 {story.type === "novel" ? "Long-form Novel" : story.content}
                             </p>
 
-                            <div className="mt-auto pt-3 border-t border-zinc-800 flex justify-between text-xs text-gray-600">
+                            <div className="mt-auto pt-3 border-t border-[var(--reader-border)] flex justify-between text-xs text-[var(--reader-text)]/70">
                                 <span className="uppercase tracking-widest">{story.type || "Short"}</span>
                                 <span>{story.genre}</span>
                                 <span>
