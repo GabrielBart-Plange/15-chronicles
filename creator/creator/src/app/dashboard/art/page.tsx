@@ -1,7 +1,7 @@
 "use client";
 
 import { auth, db } from "@/lib/firebase";
-import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, orderBy, Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ImageUpload from "@/components/ImageUpload";
@@ -65,13 +65,13 @@ export default function ArtGalleryPage() {
                 createdAt: serverTimestamp(),
             });
 
-            setArt([{
+            setArt((prevArt) => [{
                 id: docRef.id,
                 title: newTitle || "Untitled",
                 imageUrl: newImageUrl,
                 description: newDescription,
-                createdAt: new Date(),
-            }, ...art]);
+                createdAt: Timestamp.now(),
+            }, ...prevArt]);
 
             // Reset form
             setNewTitle("");

@@ -8,9 +8,14 @@ import Link from "next/link";
 
 import ReadingSettings from "@/components/reader/ReadingSettings";
 import SystemNotation from "@/components/reader/SystemNotation";
+import LikeButton from "@/components/interactions/LikeButton";
+import CommentSection from "@/components/interactions/CommentSection";
+import { useAuth } from "@/contexts/AuthContext";
+import { progressTracking } from "@/lib/progressTracking";
 
 export default function ChapterReaderPage() {
     const { id: novelId, chapterId } = useParams<{ id: string, chapterId: string }>();
+    const { user } = useAuth();
     const [novel, setNovel] = useState<any>(null);
     const [chapter, setChapter] = useState<any>(null);
     const [allChapters, setAllChapters] = useState<any[]>([]);
@@ -22,14 +27,16 @@ export default function ChapterReaderPage() {
     const [fontSize, setFontSize] = useState(18);
     const [progress, setProgress] = useState(0);
 
-    // Interaction State
-    const [liked, setLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(novel?.likes || 42); // Placeholder
+    // Removed local interaction state - now handled by LikeButton component
 
     useEffect(() => {
         const handleScroll = () => {
             const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
             const currentScroll = window.scrollY;
+            if (totalScroll <= 0) {
+                setProgress(0);
+                return;
+            }
             setProgress((currentScroll / totalScroll) * 100);
         };
         window.addEventListener("scroll", handleScroll);
@@ -61,13 +68,14 @@ export default function ChapterReaderPage() {
                 if (novelSnap.exists()) {
                     const novelData = novelSnap.data();
                     setNovel(novelData);
-                    setLikeCount(novelData.likes || 42);
                 }
 
                 // Load Chapter
                 const chapterSnap = await getDoc(doc(db, "novels", novelId, "chapters", chapterId));
+                let chapterData: any = null;
                 if (chapterSnap.exists()) {
-                    setChapter(chapterSnap.data());
+                    chapterData = chapterSnap.data();
+                    setChapter(chapterData);
                 } else {
                     router.push(`/novels/${novelId}`);
                 }
@@ -82,8 +90,21 @@ export default function ChapterReaderPage() {
                 const chaptersSnap = await getDocs(q);
                 setAllChapters(chaptersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
 
-                // Increment View (Optional, but good for "real" feel)
-                // updateDoc(doc(db, "novels", novelId), { views: increment(1) });
+                // Save progress if user is authenticated
+                if (user && novelSnap.exists() && chapterSnap.exists()) {
+                    try {
+                        const chapterOrder = typeof chapterData?.order === "number" ? chapterData.order : 0;
+                        await progressTracking.saveProgress(
+                            user.uid,
+                            novelId,
+                            chapterId,
+                            chapterOrder,
+                            chaptersSnap.size
+                        );
+                    } catch (error) {
+                        console.error("Error saving progress:", error);
+                    }
+                }
 
             } catch (error) {
                 console.error("Error loading chapter:", error);
@@ -93,7 +114,7 @@ export default function ChapterReaderPage() {
         };
 
         load();
-    }, [novelId, chapterId, router]);
+    }, [novelId, chapterId, router, user]);
 
     if (loading) return (
         <div className="min-h-screen bg-black flex items-center justify-center text-gray-500 uppercase tracking-widest text-xs">
@@ -155,24 +176,12 @@ export default function ChapterReaderPage() {
             <article className="max-w-3xl mx-auto px-6 md:px-12">
                 {/* Interaction Bar - Moescape style */}
                 <div className="flex items-center gap-4 py-8 border-b border-t mb-16 transition-colors" style={{ borderColor: 'var(--reader-border)' }}>
-                    <div className="flex items-center gap-1.5 glass-panel px-4 py-2 rounded-2xl">
-                        <button
-                            onClick={() => { setLiked(!liked); setLikeCount(liked ? likeCount - 1 : likeCount + 1); }}
-                            className={`transition-all ${liked ? 'text-pink-500 scale-110' : 'text-zinc-500 hover:text-pink-400'}`}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill={liked ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                            </svg>
-                        </button>
-                        <span className="text-xs font-bold text-zinc-400">{likeCount}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 glass-panel px-4 py-2 rounded-2xl group cursor-pointer hover:bg-white/5 transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-zinc-500 group-hover:text-zinc-300">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785c-.442.483.087 1.228.639.986 1.123-.494 2.454-.973 3.348-1.15a3.15 3.15 0 0 1 1.066.023c.337.062.671.139 1.011.139Z" />
-                        </svg>
-                        <span className="text-xs font-bold text-zinc-400">{novel.commentCount || 0}</span>
-                    </div>
+                    <LikeButton 
+                        contentType="chapter" 
+                        contentId={chapterId} 
+                        novelId={novelId} 
+                        initialLikeCount={chapter.likes || 0} 
+                    />
 
                     <div className="flex-grow" />
 
@@ -194,6 +203,13 @@ export default function ChapterReaderPage() {
                 <div className="leading-relaxed select-text min-h-[50vh]" style={{ fontSize: `${fontSize}px`, lineHeight: '1.9' }}>
                     <SystemNotation content={chapter.content} fontSize={fontSize} />
                 </div>
+
+                <CommentSection 
+                    contentType="chapter" 
+                    contentId={chapterId} 
+                    novelId={novelId} 
+                    initialCommentCount={chapter.commentCount || 0} 
+                />
 
                 {/* Footer Navigation */}
                 <footer className="pt-32 space-y-16">
@@ -241,7 +257,7 @@ export default function ChapterReaderPage() {
                 <div
                     className="h-full transition-all duration-300 shadow-[0_0_10px_var(--reader-accent)]"
                     style={{
-                        width: `${((currentIndex + 1) / allChapters.length) * 100}%`,
+                        width: `${allChapters.length ? ((currentIndex + 1) / allChapters.length) * 100 : 0}%`,
                         backgroundColor: 'var(--reader-accent)'
                     }}
                 />

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, where, orderBy, doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import { useParams } from "next/navigation";
 import StoryCard from "@/components/cards/StoryCard";
 
@@ -123,7 +123,7 @@ export default function AuthorPage() {
                                 </div>
                             )}
                         </div>
-                        <div className="absolute -bottom-2 -right-2 h-10 w-10 bg-[var(--accent-lime)] text-black rounded-full flex items-center justify-center font-black text-[10px] uppercase shadow-lg border-2 border-black">
+                        <div className="absolute -bottom-2 -right-2 h-10 w-10 bg-[var(--accent-lime)] text-white rounded-full flex items-center justify-center font-black text-[10px] uppercase shadow-lg border-2 border-black">
                             LV. 9
                         </div>
                     </div>
@@ -143,6 +143,17 @@ export default function AuthorPage() {
                         <p className="text-zinc-500 text-[11px] uppercase tracking-[0.8em] font-black">
                             Joined {authorMetadata.joinedDate}
                         </p>
+
+                        {/* Edit Profile Button for Owner */}
+                        {auth.currentUser?.uid === authorId && (
+                            <a
+                                href="/creator/dashboard/profile"
+                                className="inline-flex items-center gap-2 px-4 py-2 mt-4 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] uppercase tracking-widest text-zinc-300 transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                Edit Profile
+                            </a>
+                        )}
                     </div>
 
                     <div className="flex flex-wrap items-center justify-center gap-6 pt-4 pb-12">

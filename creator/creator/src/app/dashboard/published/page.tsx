@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 
 export default function PublishedPage() {
@@ -43,9 +43,11 @@ export default function PublishedPage() {
         load();
     }, []);
 
-    const handleDelete = async (id: string, coll: string) => {
+    const handleUnpublish = async (id: string, coll: string) => {
         if (!confirm("Are you sure you want to unpublish/delete this work?")) return;
-        await deleteDoc(doc(db, coll, id));
+        await updateDoc(doc(db, coll, id), {
+            published: false,
+        });
         setStories(stories.filter(s => s.id !== id));
     };
 
@@ -78,7 +80,7 @@ export default function PublishedPage() {
                                         Edit
                                     </Link>
                                     <button
-                                        onClick={() => handleDelete(story.id, story.collectionName)}
+                                        onClick={() => handleUnpublish(story.id, story.collectionName)}
                                         className="text-xs text-red-500 hover:text-red-400"
                                     >
                                         Unpublish

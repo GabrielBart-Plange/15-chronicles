@@ -45,6 +45,14 @@ export default function DraftsPage() {
         return () => unsub();
     }, []);
 
+    if (loading) {
+        return (
+            <div className="text-[var(--reader-text)]">
+                Loading drafts...
+            </div>
+        );
+    }
+
     const deleteDraft = async (id: string) => {
         const user = auth.currentUser;
         if (!user || !confirm("Are you sure you want to delete this draft?")) return;

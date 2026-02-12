@@ -5,8 +5,19 @@ import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import StoryCard from "@/components/cards/StoryCard";
 
+interface Story {
+    id: string;
+    title: string;
+    authorName?: string;
+    coverImage?: string;
+    imageUrl?: string;
+    genre?: string;
+    published: boolean;
+    createdAt: Date | { seconds: number; nanoseconds: number };
+}
+
 export default function StoriesListingPage() {
-    const [stories, setStories] = useState<any[]>([]);
+    const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,7 +29,21 @@ export default function StoriesListingPage() {
                     orderBy("createdAt", "desc")
                 );
                 const snap = await getDocs(q);
-                setStories(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                setStories(
+                    snap.docs.map(doc => {
+                        const data = doc.data();
+                        return {
+                            id: doc.id,
+                            title: data.title,
+                            authorName: data.authorName,
+                            coverImage: data.coverImage,
+                            imageUrl: data.imageUrl,
+                            genre: data.genre,
+                            published: data.published,
+                            createdAt: data.createdAt,
+                        } as Story;
+                    })
+                );
             } catch (err) {
                 console.error("Error fetching stories:", err);
             } finally {

@@ -172,7 +172,7 @@ export default function ProfilePage() {
                         <label className="text-[10px] uppercase tracking-[0.3em] text-[var(--reader-text)] font-bold">
                             Verification Status
                         </label>
-                        <p className={`text-sm tracking-wide ${user.emailVerified ? 'text-emerald-500' : 'text-amber-500'}`}>
+                        <p className={`text-sm tracking-wide ${user.emailVerified ? 'text-emerald-600' : 'text-amber-500'}`}>
                             {user.emailVerified ? 'Verified' : 'Unverified'}
                         </p>
                     </div>

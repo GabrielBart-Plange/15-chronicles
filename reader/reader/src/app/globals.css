@@ -17,9 +17,20 @@
   --glow-purple: rgba(139, 92, 246, 0.3);
 
   /* User Inspiration Accents */
-  --accent-lime: #d9f99d;
+  --accent-lime: #4d7c0f;
   --accent-sakura: #fbcfe8;
-  --glow-lime: rgba(217, 249, 157, 0.3);
+  --glow-lime: rgba(77, 124, 15, 0.3);
+
+  /* Notation Tokens (from Creator) */
+  --notion-sys-bg: rgba(99, 102, 241, 0.1);
+  --notion-sys-border: #6366f1;
+  --notion-sys-text: #e0e7ff;
+  --notion-qst-bg: rgba(245, 158, 11, 0.05);
+  --notion-qst-border: rgba(245, 158, 11, 0.5);
+  --notion-qst-text: #fef3c7;
+  --notion-sta-bg: rgba(255, 255, 255, 0.03);
+  --notion-sta-border: rgba(255, 255, 255, 0.1);
+  --notion-sta-text: #f4f4f5;
 }
 
 [data-theme='archive'] {

@@ -7,15 +7,15 @@ import { db } from "@/lib/firebase";
 import { notFound, useParams } from "next/navigation";
 import ReadingSettings from "@/components/reader/ReadingSettings";
 import SystemNotation from "@/components/reader/SystemNotation";
+import LikeButton from "@/components/interactions/LikeButton";
+import CommentSection from "@/components/interactions/CommentSection";
 
 export default function StoryPage() {
     const { id } = useParams<{ id: string }>();
     const [story, setStory] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    // Interaction State
-    const [liked, setLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
+    // Removed local interaction state - now handled by LikeButton component
 
     // Theme Engine State
     const [theme, setTheme] = useState("void");
@@ -28,6 +28,10 @@ export default function StoryPage() {
         const handleScroll = () => {
             const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
             const currentScroll = window.scrollY;
+            if (totalScroll <= 0) {
+                setProgress(0);
+                return;
+            }
             setProgress((currentScroll / totalScroll) * 100);
         };
         window.addEventListener("scroll", handleScroll);
@@ -59,7 +63,6 @@ export default function StoryPage() {
                 if (snap.exists() && snap.data().published) {
                     const data = snap.data();
                     setStory(data);
-                    setLikeCount(data.likes || 0);
                 }
             } catch (err) {
                 console.error("Error loading story:", err);
@@ -142,24 +145,13 @@ export default function StoryPage() {
                 <div className="px-12 md:px-16 pb-16">
                     {/* Interaction Bar (Moescape style) - Screenshot 2026-02-06 054541.png */}
                     <div className="flex items-center gap-4 py-8 border-b border-t transition-colors" style={{ borderColor: 'var(--reader-border)' }}>
-                        <div className="flex items-center gap-1.5 glass-panel px-4 py-2 rounded-2xl">
-                            <button
-                                onClick={() => { setLiked(!liked); setLikeCount(liked ? likeCount - 1 : likeCount + 1); }}
-                                className={`transition-all ${liked ? 'text-pink-500 scale-110' : 'text-zinc-500 hover:text-pink-400'}`}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill={liked ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                </svg>
-                            </button>
-                            <span className="text-xs font-bold text-zinc-400">{likeCount}</span>
-                        </div>
+                        <LikeButton 
+                            contentType="story" 
+                            contentId={id} 
+                            initialLikeCount={story.likes || 0} 
+                        />
 
-                        <div className="flex items-center gap-1.5 glass-panel px-4 py-2 rounded-2xl group cursor-pointer hover:bg-white/5 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-zinc-500 group-hover:text-zinc-300">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785c-.442.483.087 1.228.639.986 1.123-.494 2.454-.973 3.348-1.15a3.15 3.15 0 0 1 1.066.023c.337.062.671.139 1.011.139Z" />
-                            </svg>
-                            <span className="text-xs font-bold text-zinc-400">{story.commentCount || 0}</span>
-                        </div>
+
 
                         <div className="flex-grow" />
 
@@ -180,6 +172,12 @@ export default function StoryPage() {
                     <div className="leading-relaxed select-text pt-16" style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}>
                         <SystemNotation content={story.content} fontSize={fontSize} />
                     </div>
+
+                    <CommentSection 
+                        contentType="story" 
+                        contentId={id} 
+                        initialCommentCount={story.commentCount || 0} 
+                    />
 
                     <footer className="pt-24 text-center">
                         <div className="h-px w-16 bg-[var(--reader-accent)] mx-auto mb-10 opacity-30" />

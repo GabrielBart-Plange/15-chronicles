@@ -3,8 +3,6 @@
 import Sidebar from "@/components/Sidebar";
 import { useRequireAuth } from "@/lib/useRequireAuth";
 import { useState } from "react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-
 export default function DashboardLayout({
   children,
 }: {

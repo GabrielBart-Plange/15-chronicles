@@ -2,14 +2,33 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user, signOut } = useAuth();
+    const router = useRouter();
+    const pathname = usePathname();
+    const creatorUrl = process.env.NEXT_PUBLIC_CREATOR_URL || "http://localhost:3000";
+
+    // Hide Navbar on Creator Dashboard to prevent overlap
+    if (pathname?.startsWith("/creator")) return null;
+
+    const handleSignOut = async () => {
+        try {
+            await signOut();
+            router.push('/');
+        } catch (error) {
+            console.error('Sign out error:', error);
+        }
+    };
 
     const navLinks = [
         { name: "Stories", href: "/stories" },
         { name: "Novels", href: "/novels" },
         { name: "About", href: "/about" },
+        { name: "Portal", href: "/portal" },
         { name: "Library", href: "/library" },
         { name: "Ranking", href: "/ranking" },
     ];
@@ -20,13 +39,13 @@ export default function Navbar() {
                 <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
                     {/* Logo */}
                     <Link href="/" className="text-xl font-bold tracking-tighter text-white hover:opacity-80 transition-opacity flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full border border-purple-500/50 flex items-center justify-center text-[10px]">15</div>
-                        15CHRONICLES
+                        <div className="h-6 w-6 rounded-full border border-purple-500/50 flex items-center justify-center text-[10px]">V</div>
+                        VELLUM
                     </Link>
 
                     {/* Desktop Links */}
                     <div className="hidden md:flex items-center gap-8 text-[13px] font-medium text-zinc-400">
-                        {navLinks.slice(0, 3).map((link) => (
+                        {navLinks.slice(0, 4).map((link) => (
                             <Link key={link.name} href={link.href} className="hover:text-white transition-colors">
                                 {link.name}
                             </Link>
@@ -35,17 +54,36 @@ export default function Navbar() {
 
                     {/* Auth / Search / Menu */}
                     <div className="flex items-center gap-4">
-                        <button className="text-zinc-400 hover:text-white transition-colors hidden sm:block">
+                        <Link
+                            href="/creator/dashboard"
+                            className="hidden md:inline text-[12px] uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+                        >
+                            Archivist
+                        </Link>
+                        <button
+                            className="text-zinc-400 hover:text-white transition-colors hidden sm:block"
+                            title="Search"
+                            aria-label="Search"
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
                         </button>
-                        <Link
-                            href="/login"
-                            className="rounded-full bg-[var(--accent-lime)] px-5 py-1.5 text-[12px] font-bold text-black hover:bg-white transition-all shadow-[0_0_20px_-5px_var(--glow-lime)]"
-                        >
-                            Sign In
-                        </Link>
+                        {user ? (
+                            <button
+                                onClick={handleSignOut}
+                                className="rounded-full bg-[var(--accent-lime)] px-5 py-1.5 text-[12px] font-bold text-white hover:bg-white/90 transition-all shadow-[0_0_20px_-5px_var(--glow-lime)]"
+                            >
+                                Sign Out
+                            </button>
+                        ) : (
+                            <Link
+                                href="/login"
+                                className="rounded-full bg-[var(--accent-lime)] px-5 py-1.5 text-[12px] font-bold text-white hover:bg-white/90 transition-all shadow-[0_0_20px_-5px_var(--glow-lime)]"
+                            >
+                                Sign In
+                            </Link>
+                        )}
 
                         {/* Mobile Menu Toggle */}
                         <button
@@ -88,16 +126,31 @@ export default function Navbar() {
                                 <span className="text-sm font-bold tracking-widest text-zinc-300 group-hover:text-white transition-colors">{link.name}</span>
                             </Link>
                         ))}
+                        <Link
+                            href="/creator/dashboard"
+                            className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-purple-500/30 transition-all text-center flex flex-col items-center gap-3"
+                        >
+                            <span className="text-sm font-bold tracking-widest text-zinc-300 group-hover:text-white transition-colors">Archivist</span>
+                        </Link>
                     </div>
 
                     <div className="mt-auto mb-12 p-8 glass-panel rounded-3xl border border-white/5 text-center">
                         <p className="text-[11px] uppercase tracking-[0.4em] text-zinc-500 mb-6 font-bold">Member Access</p>
-                        <Link
-                            href="/signup"
-                            className="block w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold uppercase tracking-[0.2em] premium-glow text-center"
-                        >
-                            Join the Archives
-                        </Link>
+                        {user ? (
+                            <button
+                                onClick={handleSignOut}
+                                className="block w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold uppercase tracking-[0.2em] premium-glow text-center"
+                            >
+                                Sign Out
+                            </button>
+                        ) : (
+                            <Link
+                                href="/signup"
+                                className="block w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold uppercase tracking-[0.2em] premium-glow text-center"
+                            >
+                                Join the Archives
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

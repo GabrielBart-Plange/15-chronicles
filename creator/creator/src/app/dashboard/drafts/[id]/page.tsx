@@ -6,9 +6,7 @@ import {
     deleteDoc,
     doc,
     getDoc,
-    updateDoc,
     serverTimestamp,
-    addDoc,
     collection,
     getDocs,
     orderBy,
@@ -100,9 +98,9 @@ export default function DraftEditorPage() {
             if (!user || type !== "novel") return;
 
             try {
-                let chaptersRef = collection(db, "users", user.uid, "drafts", id, "chapters");
-                let q = query(chaptersRef, orderBy("order", "asc"));
-                let chapSnap = await getDocs(q);
+                const chaptersRef = collection(db, "users", user.uid, "drafts", id, "chapters");
+                const q = query(chaptersRef, orderBy("order", "asc"));
+                const chapSnap = await getDocs(q);
 
                 if (chapSnap.docs.length === 0) {
                     const pubChaptersRef = collection(db, "novels", id, "chapters");
@@ -124,7 +122,7 @@ export default function DraftEditorPage() {
     // Autosave
     useEffect(() => {
         const user = auth.currentUser;
-        if (!user || !title) return;
+        if (!user) return;
 
         const t = setTimeout(async () => {
             setSaving(true);
@@ -356,7 +354,7 @@ export default function DraftEditorPage() {
                                 if (type === 'short') setContent(content + template);
                                 else updateActiveChapter({ content: (chapters[activeChapterIndex]?.content || "") + template });
                             }}
-                            className="bg-emerald-600 hover:bg-emerald-500 text-white text-[9px] uppercase tracking-widest px-3 py-1.5 font-bold shadow-lg"
+                            className="bg-emerald-700 hover:bg-emerald-600 text-white text-[9px] uppercase tracking-widest px-3 py-1.5 font-bold shadow-lg"
                         >
                             + |Status Table|
                         </button>

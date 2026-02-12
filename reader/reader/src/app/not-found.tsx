@@ -29,7 +29,7 @@ export default function NotFound() {
                 <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                     <Link
                         href="/"
-                        className="px-10 py-4 rounded-full bg-[var(--accent-lime)] text-black font-bold uppercase tracking-[0.2em] text-[12px] hover:bg-white transition-all shadow-[0_0_30px_-5px_var(--glow-lime)] hover:-translate-y-1 active:scale-95"
+                        className="px-10 py-4 rounded-full bg-[var(--accent-lime)] text-white font-bold uppercase tracking-[0.2em] text-[12px] hover:bg-white/90 transition-all shadow-[0_0_30px_-5px_var(--glow-lime)] hover:-translate-y-1 active:scale-95"
                     >
                         Return Home
                     </Link>

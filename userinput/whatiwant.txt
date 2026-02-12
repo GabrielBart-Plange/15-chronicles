@@ -1,0 +1,11 @@
+so, the author page in the reader app will have a little edit button (like a pen/pencil icon next to the avatar image. once clicked, we'll see the creator profile page, but it'll just say "profile" or "edit profile" as the heading. author page will be called user page instead (still under development). anyone can view someone's user page but certain sections will not be visible to anyone but the user. instead of "creator", say "archivist".
+
+when clicked on "archivist" goes straight to the creator dashboard. the creator sidebar should not have "portal" and "profile".
+
+add file transfer to new drafts (local and online) so authors don't spend too much time retyping their works(that is if typed elsewhere already). make it that it will automatically read and copy (with original formatting included) and paste as seen, with the only changes being that it is formatted to fit the app. short stories will be easier to do with this system. novels will be tricker; as long as the file contains clear notations of when chapters start and/or end, it shouldn't be difficult.
+
+change ".15 Chronicles" to "Vellum". Logo is a "V".
+
+use same UI style for /creator
+
+more changes will come soon...

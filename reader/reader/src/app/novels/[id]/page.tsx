@@ -1,18 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, orderBy, query, where, setDoc, Timestamp } from "firebase/firestore";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function NovelLandingPage() {
     const { id } = useParams<{ id: string }>();
+    const router = useRouter();
+    const { user } = useAuth();
     const [novel, setNovel] = useState<any>(null);
     const [chapters, setChapters] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showChapters, setShowChapters] = useState(false);
-    const router = useRouter();
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -22,7 +26,8 @@ export default function NovelLandingPage() {
                 const snap = await getDoc(docRef);
 
                 if (snap.exists()) {
-                    setNovel(snap.data());
+                    const data = snap.data();
+                    setNovel(data);
 
                     // Load chapters
                     const chaptersRef = collection(db, "novels", id, "chapters");
@@ -33,8 +38,14 @@ export default function NovelLandingPage() {
                     );
                     const chaptersSnap = await getDocs(q);
                     setChapters(chaptersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+                    if (user) {
+                        const savedRef = doc(db, "users", user.uid, "savedNovels", id);
+                        const savedSnap = await getDoc(savedRef);
+                        setSaved(savedSnap.exists());
+                    }
                 } else {
-                    router.push("/404");
+                    notFound();
                 }
             } catch (error) {
                 console.error("Error loading novel:", error);
@@ -44,7 +55,31 @@ export default function NovelLandingPage() {
         };
 
         load();
-    }, [id, router]);
+    }, [id, user]);
+
+    const handleSaveToLibrary = async () => {
+        if (!user) {
+            router.push(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+            return;
+        }
+
+        if (!novel || !id) return;
+
+        setSaving(true);
+        try {
+            await setDoc(doc(db, "users", user.uid, "savedNovels", id), {
+                title: novel.title || "Untitled",
+                coverImage: novel.coverImage || "",
+                authorName: novel.authorName || "Unknown Author",
+                savedAt: Timestamp.now()
+            }, { merge: true });
+            setSaved(true);
+        } catch (error) {
+            console.error("Error saving novel:", error);
+        } finally {
+            setSaving(false);
+        }
+    };
 
     if (loading) return (
         <div className="min-h-screen bg-black flex items-center justify-center text-gray-500 uppercase tracking-widest text-xs">
@@ -128,8 +163,12 @@ export default function NovelLandingPage() {
                         >
                             Open Chronicles
                         </button>
-                        <button className="px-12 py-5 rounded-2xl border border-white/10 glass-panel text-white text-[13px] font-black uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
-                            Add to Library
+                        <button
+                            onClick={handleSaveToLibrary}
+                            disabled={saving}
+                            className="px-12 py-5 rounded-2xl border border-white/10 glass-panel text-white text-[13px] font-black uppercase tracking-[0.3em] hover:bg-white/5 transition-all disabled:opacity-50"
+                        >
+                            {saved ? "In Library" : saving ? "Saving..." : "Add to Library"}
                         </button>
                     </div>
                 </div>
