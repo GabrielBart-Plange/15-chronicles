@@ -69,3 +69,12 @@ export interface NovelReference {
   authorName: string;
   savedAt: Timestamp;
 }
+
+export interface ArtPiece {
+  id: string;
+  title: string;
+  imageUrl: string;
+  description?: string;
+  authorId?: string;
+  createdAt: Timestamp;
+}

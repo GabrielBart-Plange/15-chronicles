@@ -4,6 +4,7 @@ import { auth, db } from "@/lib/firebase";
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, orderBy, Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import ImageUpload from "@/components/creator/ImageUpload";
+import { ArtPiece } from "@/types";
 import Link from "next/link";
 import MobileNav from "@/components/creator/MobileNav";
 import Sidebar from "@/components/creator/Sidebar";

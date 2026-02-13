@@ -5,6 +5,7 @@ import { collection, getDocs, query, where, orderBy, doc, getDoc } from "firebas
 import { db, auth } from "@/lib/firebase";
 import { useParams } from "next/navigation";
 import StoryCard from "@/components/cards/StoryCard";
+import { ArtPiece } from "@/types";
 
 export default function AuthorPage() {
     // Note: Next.js 15+ needs params awaited if it's a page prop, 
@@ -12,7 +13,7 @@ export default function AuthorPage() {
     const { id: authorId } = useParams<{ id: string }>();
     const [stories, setStories] = useState<any[]>([]);
     const [novels, setNovels] = useState<any[]>([]);
-    const [art, setArt] = useState<any[]>([]);
+    const [art, setArt] = useState<ArtPiece[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"stories" | "novels" | "art">("stories");
 
@@ -70,7 +71,7 @@ export default function AuthorPage() {
                     orderBy("createdAt", "desc")
                 );
                 const artSnap = await getDocs(qArt);
-                setArt(artSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                setArt(artSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as ArtPiece)));
 
             } catch (error) {
                 console.error("Error fetching author profile:", error);
