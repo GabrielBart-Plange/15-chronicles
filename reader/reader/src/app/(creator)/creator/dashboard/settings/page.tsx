@@ -116,7 +116,7 @@ export default function SettingsPage() {
             </div>
 
             <footer className="pt-12 text-[10px] uppercase tracking-[0.4em] text-gray-800 border-t border-white/5">
-                .15 Chronicles System v1.2.0
+                Vellum System v1.2.0
             </footer>
         </section>
     );

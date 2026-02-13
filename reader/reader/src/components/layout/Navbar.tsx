@@ -38,8 +38,11 @@ export default function Navbar() {
             <nav className="sticky top-0 z-[100] w-full glass-panel shadow-sm">
                 <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
                     {/* Logo */}
-                    <Link href="/" className="text-xl font-bold tracking-tighter text-white hover:opacity-80 transition-opacity flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full border border-purple-500/50 flex items-center justify-center text-[10px]">V</div>
+                    <Link href="/" className="text-xl font-bold tracking-tighter text-white hover:opacity-80 transition-opacity flex items-center gap-3">
+                        <div className="relative h-8 w-8 rounded-full bg-gradient-to-br from-[#8b0000] to-[#4a0000] flex items-center justify-center text-[14px] font-serif shadow-[0_2px_10px_rgba(139,0,0,0.5)] border border-[#a52a2a]/30 before:absolute before:inset-0 before:rounded-full before:bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.2),transparent)] overflow-hidden">
+                            <span className="relative z-10 text-[#aa8e45] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">V</span>
+                            <div className="absolute inset-0.5 rounded-full border border-black/10 opacity-30"></div>
+                        </div>
                         VELLUM
                     </Link>
 

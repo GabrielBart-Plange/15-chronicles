@@ -9,7 +9,7 @@ export default function Footer() {
                     <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
                     <Link href="/contact" className="hover:text-gray-300 transition-colors">Contact</Link>
                 </div>
-                <p>&copy; {new Date().getFullYear()} .15 Chronicles. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} Vellum. All rights reserved.</p>
             </div>
         </footer>
     );

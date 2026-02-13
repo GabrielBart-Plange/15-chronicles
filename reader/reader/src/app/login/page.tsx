@@ -57,7 +57,7 @@ function LoginForm() {
 
             <div className="w-full max-w-md space-y-12 relative z-10 text-center">
                 <header className="space-y-4">
-                    <Link href="/" className="text-2xl font-black tracking-tighter text-white uppercase italic">.15 Chronicles</Link>
+                    <Link href="/" className="text-2xl font-black tracking-tighter text-white uppercase italic">Vellum</Link>
                     <p className="text-[10px] uppercase tracking-[0.6em] text-zinc-500 font-bold">Authentication Node</p>
                 </header>
 

@@ -10,7 +10,7 @@ export default function AboutPage() {
                 </header>
                 <div className="space-y-8 text-zinc-400 text-lg leading-relaxed font-light">
                     <p>
-                        .15 Chronicles is a decentralized archive of creative storytelling.
+                        Vellum is a decentralized archive of creative storytelling.
                         We believe in the power of the written word, preserved for eternity.
                     </p>
                     <p>

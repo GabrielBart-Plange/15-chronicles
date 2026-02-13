@@ -26,15 +26,40 @@ export default function NewDraftPage() {
         router.push(`/creator/dashboard/drafts/${doc.id}`);
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        const title = file.name.replace(/\.[^/.]+$/, "");
+
+        if (file.type === "application/pdf") {
+            try {
+                // Load pdfjs-dist from CDN
+                const pdfjsLib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs" as any);
+                pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs";
+
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = "";
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map((item: any) => item.str).join(" ");
+                    fullText += pageText + "\n\n";
+                }
+
+                await create("short", { title, content: fullText });
+            } catch (error) {
+                console.error("PDF import failed:", error);
+                alert("Failed to import PDF. Ensure it is not password protected.");
+            }
+            return;
+        }
 
         const reader = new FileReader();
         reader.onload = async (event) => {
             const text = event.target?.result as string;
-            // Simple extraction: Filename as title (minus extension), Content as is
-            const title = file.name.replace(/\.[^/.]+$/, "");
             await create("short", { title, content: text });
         };
         reader.readAsText(file);
@@ -63,7 +88,7 @@ export default function NewDraftPage() {
             <div className="relative w-full border border-[var(--reader-border)] p-8 text-left group hover:bg-[var(--reader-border)]/10 transition-all border-dashed">
                 <input
                     type="file"
-                    accept=".txt,.md"
+                    accept=".txt,.md,.pdf"
                     onChange={handleFileUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
@@ -71,7 +96,7 @@ export default function NewDraftPage() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     Import from File
                 </span>
-                <span className="text-sm text-[var(--reader-text)] block">Upload a .txt or .md file to automatically create a draft.</span>
+                <span className="text-sm text-[var(--reader-text)] block">Upload a .txt, .md, or .pdf file to automatically create a draft.</span>
             </div>
         </section>
     );
