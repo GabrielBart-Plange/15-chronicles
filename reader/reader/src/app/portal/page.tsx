@@ -46,7 +46,7 @@ export default function PortalPage() {
                     </a>
 
                     <a
-                        href="https://discord.gg/DWrHwZRvNq"
+                        href="https://discord.gg/QSmgvTwBUu"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="glass-panel rounded-3xl border border-white/5 p-8 md:p-10 hover:border-[#5865F2]/40 transition-all group"

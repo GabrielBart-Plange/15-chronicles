@@ -9,7 +9,7 @@ export default function Footer() {
                     <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
                     <Link href="/contact" className="hover:text-gray-300 transition-colors">Contact</Link>
                     <a
-                        href="https://discord.gg/DWrHwZRvNq"
+                        href="https://discord.gg/QSmgvTwBUu"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-[#5865F2] transition-colors"
