@@ -96,8 +96,9 @@ export default function ChapterReaderPage() {
                 // Load Novel Metadata (Static is fine for metadata, but we might want real-time later. For now keep static to minimize reads if not needed, but consistency suggested real-time)
                 // Actually user said "engagement to record real-time", specifically for metrics. 
                 const novelSnap = await getDoc(doc(db, "novels", novelId));
+                let novelData: any = null;
                 if (novelSnap.exists()) {
-                    const novelData = novelSnap.data();
+                    novelData = novelSnap.data();
                     setNovel(novelData);
                 }
 
@@ -124,13 +125,7 @@ export default function ChapterReaderPage() {
                 setAllChapters(chaptersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
 
                 // Save progress if user is authenticated
-                // We only do this once on mount/load, not on every snapshot update
-                if (user && novelSnap.exists()) { // Check novelSnap existence from the static fetch above
-                    // We need the chapter data for 'order'. We can get it from the snapshot listener but that's async. 
-                    // For progress saving complexity, let's fetch it once or assume access.
-                    // A cleaner way is to separate the progress saving.
-
-                    // Let's do a single fetch for progress saving purposes or wait for the first snapshot.
+                if (user && novelData) {
                     const chapterSnap = await getDoc(doc(db, "novels", novelId, "chapters", chapterId));
                     if (chapterSnap.exists()) {
                         const chapterData = chapterSnap.data();
@@ -138,7 +133,11 @@ export default function ChapterReaderPage() {
                         await progressTracking.saveProgress(
                             user.uid,
                             novelId,
+                            novelData.title,
+                            novelData.coverImage,
+                            novelData.authorName,
                             chapterId,
+                            chapterData.title || "Unknown Chapter",
                             chapterOrder,
                             chaptersSnap.size
                         );

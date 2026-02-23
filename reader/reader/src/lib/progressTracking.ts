@@ -15,16 +15,20 @@ interface ProgressTrackingService {
   saveProgress: (
     userId: string,
     novelId: string,
+    novelTitle: string,
+    coverImage: string,
+    authorName: string,
     chapterId: string,
+    chapterTitle: string,
     currentChapterOrder: number,
     totalChapters: number
   ) => Promise<void>;
-  
+
   getProgress: (
     userId: string,
     novelId: string
   ) => Promise<ReadingProgress | null>;
-  
+
   getUserLibrary: (
     userId: string
   ) => Promise<LibraryData>;
@@ -34,25 +38,33 @@ export const progressTracking: ProgressTrackingService = {
   saveProgress: async (
     userId: string,
     novelId: string,
+    novelTitle: string,
+    coverImage: string,
+    authorName: string,
     chapterId: string,
+    chapterTitle: string,
     currentChapterOrder: number,
     totalChapters: number
   ): Promise<void> => {
     try {
       const progressRef = doc(db, "users", userId, "progress", novelId);
-      
+
       // Calculate progress percentage
       const progressPercentage = totalChapters > 0
         ? Math.min(Math.round(((currentChapterOrder + 1) / totalChapters) * 100), 100)
         : 0;
-      
+
       const progressData: ReadingProgress = {
         novelId,
+        novelTitle,
+        coverImage,
+        authorName,
         currentChapterId: chapterId,
+        currentChapterTitle: chapterTitle,
         progressPercentage,
         lastReadAt: Timestamp.now()
       };
-      
+
       await setDoc(progressRef, progressData);
     } catch (error) {
       console.error("Error saving progress:", error);
@@ -67,16 +79,21 @@ export const progressTracking: ProgressTrackingService = {
     try {
       const progressRef = doc(db, "users", userId, "progress", novelId);
       const snapshot = await getDoc(progressRef);
-      
+
       if (snapshot.exists()) {
+        const data = snapshot.data();
         return {
-          novelId: snapshot.data().novelId,
-          currentChapterId: snapshot.data().currentChapterId,
-          progressPercentage: snapshot.data().progressPercentage,
-          lastReadAt: snapshot.data().lastReadAt
+          novelId: data.novelId,
+          novelTitle: data.novelTitle,
+          coverImage: data.coverImage,
+          authorName: data.authorName,
+          currentChapterId: data.currentChapterId,
+          currentChapterTitle: data.currentChapterTitle,
+          progressPercentage: data.progressPercentage,
+          lastReadAt: data.lastReadAt
         } as ReadingProgress;
       }
-      
+
       return null;
     } catch (error) {
       console.error("Error getting progress:", error);
@@ -98,7 +115,7 @@ export const progressTracking: ProgressTrackingService = {
         authorName: doc.data().authorName,
         likedAt: doc.data().likedAt || Timestamp.now()
       }));
-      
+
       // Get saved novels
       const savedNovelsRef = collection(db, "users", userId, "savedNovels");
       const savedNovelsQuery = query(savedNovelsRef, orderBy("savedAt", "desc"));
@@ -115,42 +132,25 @@ export const progressTracking: ProgressTrackingService = {
       // Get novels in progress
       const progressRef = collection(db, "users", userId, "progress");
       const progressSnapshot = await getDocs(progressRef);
-      
-      const novelsInProgress: NovelProgressReference[] = [];
-      
-      for (const progressDoc of progressSnapshot.docs) {
-        const novelId = progressDoc.id;
+
+      const novelsInProgress: NovelProgressReference[] = progressSnapshot.docs.map(progressDoc => {
         const progressData = progressDoc.data() as ReadingProgress;
-        
-        // Get novel details
-        const novelRef = doc(db, "novels", novelId);
-        const novelSnapshot = await getDoc(novelRef);
-        
-        if (novelSnapshot.exists()) {
-          const novelData = novelSnapshot.data();
-          
-          // Get current chapter details
-          const chapterRef = doc(db, "novels", novelId, "chapters", progressData.currentChapterId);
-          const chapterSnapshot = await getDoc(chapterRef);
-          
-          let currentChapterTitle = "Unknown Chapter";
-          if (chapterSnapshot.exists()) {
-            currentChapterTitle = chapterSnapshot.data().title;
-          }
-          
-          novelsInProgress.push({
-            id: novelId,
-            title: novelData.title,
-            coverImage: novelData.coverImage,
-            authorName: novelData.authorName,
-            currentChapterId: progressData.currentChapterId,
-            currentChapterTitle: currentChapterTitle,
-            progressPercentage: progressData.progressPercentage,
-            lastReadAt: progressData.lastReadAt
-          });
-        }
-      }
-      
+        return {
+          id: progressDoc.id,
+          title: progressData.novelTitle || "Unknown Novel",
+          coverImage: progressData.coverImage || "",
+          authorName: progressData.authorName || "Unknown Author",
+          currentChapterId: progressData.currentChapterId,
+          currentChapterTitle: progressData.currentChapterTitle || "Unknown Chapter",
+          progressPercentage: progressData.progressPercentage,
+          lastReadAt: progressData.lastReadAt
+        };
+      });
+      return {
+        likedStories,
+        savedNovels,
+        novelsInProgress
+      };
       return {
         likedStories,
         savedNovels,

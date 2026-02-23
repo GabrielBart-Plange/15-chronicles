@@ -5,13 +5,13 @@ service cloud.firestore {
     // 📖 Stories
     match /stories/{storyId} {
       allow read: if resource.data.published == true
-        || (request.auth != null && resource.data.authorId == request.auth.uid);
+        || (request.auth != null && (resource.data.authorId == request.auth.uid || resource.data.creatorId == request.auth.uid));
 
       allow create: if request.auth != null;
 
       // Author can update/delete
       allow update, delete: if request.auth != null
-        && resource.data.authorId == request.auth.uid;
+        && (resource.data.authorId == request.auth.uid || resource.data.creatorId == request.auth.uid);
 
       // ✅ Allow public view increments, but auth for likes/comments
       allow update: if request.resource.data.diff(resource.data).changedKeys().hasOnly(["views"])
@@ -37,12 +37,12 @@ service cloud.firestore {
     match /novels/{novelId} {
       // FIX: Allow reading if resource is null (404) to avoid permission errors on client
       allow read: if resource == null || resource.data.published == true
-        || (request.auth != null && resource.data.authorId == request.auth.uid);
+        || (request.auth != null && (resource.data.authorId == request.auth.uid || resource.data.creatorId == request.auth.uid));
 
       allow create: if request.auth != null;
 
       allow update, delete: if request.auth != null
-        && resource.data.authorId == request.auth.uid;
+        && (resource.data.authorId == request.auth.uid || resource.data.creatorId == request.auth.uid);
 
       // ✅ Allow public view increments, but auth for likes/comments
       allow update: if request.resource.data.diff(resource.data).changedKeys().hasOnly(["views"])
@@ -96,8 +96,15 @@ service cloud.firestore {
     // 👤 User Profiles (Reader + Creator)
     match /users/{userId} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
-
+      
+      // Allow creation of profile
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // Prevent users from granting themselves admin, premium, or modifying balances
+      allow update: if request.auth != null && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).changedKeys()
+          .hasAny(['role', 'isPremium', 'essence', 'essenceBalance', 'payoutBalance', 'level9Status']);
+          
       // Follow System
       match /following/{authorId} {
         allow read: if true;
@@ -147,7 +154,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.auth != null;
       allow update, delete: if request.auth != null
-        && resource.data.authorId == request.auth.uid;
+        && (resource.data.authorId == request.auth.uid || resource.data.creatorId == request.auth.uid);
     }
   }
 }

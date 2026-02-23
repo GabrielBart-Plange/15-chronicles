@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import ImageUpload from "@/components/ImageUpload";
 
 export default function DraftEditorPage() {
+    const MAX_CONTENT_LENGTH = 800000; // ~800KB safety limit for 1MB Firestore doc
     const GENRE_OPTIONS = {
         fiction: ["Fantasy", "Sci-Fi", "Mystery", "Horror", "Thriller", "Romance", "Adventure", "Historical Fiction", "Comedy", "Literary Fiction"],
         "non-fiction": ["Biography", "Memoir", "Self-Help", "Essay", "Travel", "History", "Science", "Philosophy", "Guide", "Commentary"]
@@ -125,6 +126,14 @@ export default function DraftEditorPage() {
         if (!user) return;
 
         const t = setTimeout(async () => {
+            // Check size before autosave
+            if (type === "short" && content.length > MAX_CONTENT_LENGTH) {
+                console.warn("Content size warning: Short story approaching Firestore limit.");
+            }
+            if (type === "novel") {
+                const oversized = chapters.some(c => (c.content || "").length > MAX_CONTENT_LENGTH);
+                if (oversized) console.warn("Content size warning: Chapters approaching Firestore limit.");
+            }
             setSaving(true);
             try {
                 const ref = doc(db, "users", user.uid, "drafts", id);
@@ -143,6 +152,13 @@ export default function DraftEditorPage() {
                     for (let i = 0; i < chapters.length; i++) {
                         const chapter = chapters[i];
                         if (!chapter?.id) continue;
+
+                        // Local size guard check
+                        if ((chapter.content || "").length > MAX_CONTENT_LENGTH) {
+                            console.error(`Chapter "${chapter.title}" exceeds safety limit.`);
+                            continue;
+                        }
+
                         const chapRef = doc(db, "users", user.uid, "drafts", id, "chapters", chapter.id);
                         await setDoc(chapRef, {
                             title: chapter.title || "Untitled Chapter",
@@ -166,47 +182,63 @@ export default function DraftEditorPage() {
         const user = auth.currentUser;
         if (!user) return;
 
-        let authorDisplayName = user.email || "Unknown Author";
         try {
-            const userSnap = await getDoc(doc(db, "users", user.uid));
-            if (userSnap.exists() && userSnap.data().username) authorDisplayName = userSnap.data().username;
-        } catch (e) { }
+            let authorDisplayName = user.email || "Unknown Author";
+            try {
+                const userSnap = await getDoc(doc(db, "users", user.uid));
+                if (userSnap.exists() && userSnap.data().username) authorDisplayName = userSnap.data().username;
+            } catch (e) { }
 
-        const collectionName = type === "novel" ? "novels" : "stories";
-        await setDoc(doc(db, collectionName, id), {
-            title,
-            authorId: user.uid,
-            authorName: authorDisplayName,
-            coverImage: coverImage || "https://placehold.co/400x600/1a1a1a/666666?text=Cover",
-            category,
-            genre,
-            type,
-            tags,
-            published: true,
-            createdAt: serverTimestamp(),
-            publishedAt: serverTimestamp(),
-            ...(type === "short" ? { content } : {}),
-        });
+            const collectionName = type === "novel" ? "novels" : "stories";
 
-        if (type === "novel" && chapters) {
-            for (let i = 0; i < chapters.length; i++) {
-                const chapter = chapters[i];
-                if (!chapter || !chapter.id) continue;
-                await setDoc(doc(db, "novels", id, "chapters", chapter.id), {
-                    title: chapter.title || "Untitled",
-                    content: chapter.content || "",
-                    order: i,
-                    authorId: user.uid,
-                    novelId: id,
-                    published: true,
-                    publishedAt: serverTimestamp(),
-                });
+            // Final size check
+            if (type === "short" && content.length > MAX_CONTENT_LENGTH) {
+                alert("Content is too large to publish. Please split it into a novel or shorten it.");
+                return;
             }
-        }
-        alert(`${type === "novel" ? "Novel" : "Short story"} published successfully!`);
-    };
 
-    // ... rest of help functions same ...
+            await setDoc(doc(db, collectionName, id), {
+                title,
+                authorId: user.uid,
+                authorName: authorDisplayName,
+                coverImage: coverImage || "https://placehold.co/400x600/1a1a1a/666666?text=Cover",
+                category,
+                genre,
+                type,
+                tags,
+                published: true,
+                createdAt: serverTimestamp(),
+                publishedAt: serverTimestamp(),
+                ...(type === "short" ? { content } : {}),
+            });
+
+            if (type === "novel" && chapters) {
+                for (let i = 0; i < chapters.length; i++) {
+                    const chapter = chapters[i];
+                    if (!chapter || !chapter.id) continue;
+
+                    if ((chapter.content || "").length > MAX_CONTENT_LENGTH) {
+                        alert(`Chapter "${chapter.title}" is too large. Each chapter must be under 800,000 characters.`);
+                        return;
+                    }
+
+                    await setDoc(doc(db, "novels", id, "chapters", chapter.id), {
+                        title: chapter.title || "Untitled",
+                        content: chapter.content || "",
+                        order: i,
+                        authorId: user.uid,
+                        novelId: id,
+                        published: true,
+                        publishedAt: serverTimestamp(),
+                    });
+                }
+            }
+            alert(`${type === "novel" ? "Novel" : "Short story"} published successfully!`);
+        } catch (error) {
+            console.error("Publishing Error:", error);
+            alert("Failed to publish. Check your connection or content size.");
+        }
+    };
     const deleteChapter = async (index: number) => {
         if (!confirm("Are you sure you want to delete this chapter?")) return;
         const chapterToDelete = chapters[index];

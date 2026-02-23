@@ -6,14 +6,15 @@ export async function syncCreatorProfile(user: User, username?: string) {
     try {
         const userRef = doc(db, "users", user.uid);
         const existing = await getDoc(userRef);
+        const existingData = existing.exists() ? existing.data() : null;
 
         const fallbackName =
+            existingData?.username ||
             username ||
             user.displayName ||
             user.email?.split("@")[0] ||
-            "Creator";
+            "User";
 
-        const existingData = existing.exists() ? existing.data() : null;
         const existingRoles = Array.isArray(existingData?.roles) ? existingData?.roles : [];
 
         // Check for upgrade

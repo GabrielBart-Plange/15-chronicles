@@ -17,7 +17,11 @@ export interface ReaderProfile {
 // Reading Progress
 export interface ReadingProgress {
   novelId: string;
+  novelTitle?: string;
+  coverImage?: string;
+  authorName?: string;
   currentChapterId: string;
+  currentChapterTitle?: string;
   progressPercentage: number;
   lastReadAt: Timestamp;
 }

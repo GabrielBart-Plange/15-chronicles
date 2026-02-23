@@ -69,6 +69,7 @@ export default function Navbar() {
     const navLinks = [
         { name: "Stories", href: "/stories" },
         { name: "Novels", href: "/novels" },
+        { name: "Profile", href: user ? `/authors/${user.uid}` : "/profile" },
         { name: "About", href: "/about" },
         { name: "Portal", href: "/portal" },
         { name: "Library", href: "/library" },
@@ -94,7 +95,7 @@ export default function Navbar() {
 
                     {/* Desktop Links */}
                     <div className="hidden md:flex items-center gap-8 text-[13px] font-medium text-zinc-400">
-                        {navLinks.slice(0, 4).map((link) => (
+                        {navLinks.slice(0, 5).map((link) => (
                             <Link key={link.name} href={link.href} className="hover:text-white transition-colors">
                                 {link.name}
                             </Link>

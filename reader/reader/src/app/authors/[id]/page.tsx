@@ -5,6 +5,7 @@ import { collection, getDocs, query, where, orderBy, doc, getDoc, setDoc, delete
 import { db, auth } from "@/lib/firebase";
 import { useParams } from "next/navigation";
 import StoryCard from "@/components/cards/StoryCard";
+import Link from "next/link";
 import { ArtPiece } from "@/types";
 
 export default function AuthorPage() {
@@ -143,7 +144,7 @@ export default function AuthorPage() {
 
     if (loading) return (
         <div className="min-h-screen bg-black flex items-center justify-center text-zinc-700 font-black tracking-[0.5em] uppercase text-xs">
-            Summoning Archivist...
+            Summoning...
         </div>
     );
 
@@ -201,13 +202,13 @@ export default function AuthorPage() {
 
                         {/* Edit Profile Button for Owner */}
                         {auth.currentUser?.uid === authorId && (
-                            <a
-                                href="/creator/dashboard/profile"
+                            <Link
+                                href="/profile"
                                 className="inline-flex items-center gap-2 px-4 py-2 mt-4 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] uppercase tracking-widest text-zinc-300 transition-colors"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                                 Edit Profile
-                            </a>
+                            </Link>
                         )}
                     </div>
 
@@ -216,8 +217,8 @@ export default function AuthorPage() {
                             <button
                                 onClick={isFollowing ? handleUnfollow : handleFollow}
                                 className={`px-10 py-4 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-xl ${isFollowing
-                                        ? "bg-zinc-800 text-white border border-white/10"
-                                        : "bg-white text-black"
+                                    ? "bg-zinc-800 text-white border border-white/10"
+                                    : "bg-white text-black"
                                     }`}
                             >
                                 {isFollowing ? "Following" : "Follow"}
